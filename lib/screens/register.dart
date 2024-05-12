@@ -16,7 +16,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _confirmPasswordControl = TextEditingController();
 
   Future<void> registerUser() async {
-    final String apiUrl = 'http://192.168.31.223:9000/api/register_flutter'; 
+    final String apiUrl = 'http://192.168.56.33:9000/api/register_flutter'; 
     try {
       final response = await http.post(
         Uri.parse(apiUrl),

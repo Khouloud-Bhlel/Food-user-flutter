@@ -8,7 +8,7 @@ class LoginScreen extends StatelessWidget {
   final TextEditingController _passwordController = TextEditingController();
 
   Future<void> loginUser(BuildContext context, String email, String password) async {
-    String url = 'http://192.168.31.223:9000/api/login';
+    String url = 'http://192.168.56.33:9000/api/login';
 
     Map<String, String> body = {
       'email': email,

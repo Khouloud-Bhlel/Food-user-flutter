@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:resterant_app/screens/dishes.dart';
+import 'package:resterant_app/screens/discount.dart';
 import 'package:resterant_app/widgets/home_category.dart';
 import 'package:resterant_app/widgets/grid_product.dart';
-import 'package:resterant_app/util/foods.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -13,19 +12,30 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   late Future<List<dynamic>> _categoriesFuture;
+  late Future<List<dynamic>> _productsFuture;
 
   @override
   void initState() {
     super.initState();
     _categoriesFuture = fetchCategories();
+     _productsFuture = fetchProducts();
+
   }
 
   Future<List<dynamic>> fetchCategories() async {
-    final response = await http.get(Uri.parse('http://192.168.31.223:9000/api/categories'));
+    final response = await http.get(Uri.parse('http://192.168.56.33:9000/api/categories'));
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
       throw Exception('Failed to load categories');
+    }
+  }
+   Future<List<dynamic>> fetchProducts() async {
+    final response = await http.get(Uri.parse('http://192.168.56.33:9000/api/products'));
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to load products');
     }
   }
 
@@ -55,7 +65,7 @@ class _HomeState extends State<Home> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (BuildContext context) {
-                          return DishesScreen();
+                          return DiscountPage();
                         },
                       ),
                     );
@@ -124,27 +134,46 @@ class _HomeState extends State<Home> {
               ],
             ),
             SizedBox(height: 10.0),
-            GridView.builder(
-              shrinkWrap: true,
-              primary: false,
-              physics: NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: MediaQuery.of(context).size.width /
-                    (MediaQuery.of(context).size.height / 1.25),
-              ),
-              itemCount: foods.length,
-              itemBuilder: (BuildContext context, int index) {
-                Map food = foods[index];
-                return GridProduct(
-                  img: food['img'],
-                  isFav: false,
-                  name: food['name'],
-                  rating: 5.0,
-                  raters: 23,
-                );
-              },
-            ),
+          FutureBuilder<List<dynamic>>(
+  future: _productsFuture,
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return CircularProgressIndicator();
+    } else if (snapshot.hasError) {
+      return Text('Error: ${snapshot.error}');
+    } else {
+      List<dynamic> products = snapshot.data ?? [];
+      return GridView.builder(
+        shrinkWrap: true,
+        primary: false,
+        physics: NeverScrollableScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: MediaQuery.of(context).size.width /
+              (MediaQuery.of(context).size.height / 1.25),
+        ),
+        itemCount: products.length,
+        itemBuilder: (BuildContext context, int index) {
+          Map? product = products[index];
+          if (product != null) {
+           return GridProduct(
+  imageUrl: product['image'] ?? '',
+  name: product['name'] ?? '',
+  desc: product['desc'] ?? '',
+  productId: product['_id'] ?? '',
+
+
+);
+
+          } else {
+            return SizedBox();
+          }
+        },
+      );
+    }
+  },
+),
+
             SizedBox(height: 30),
           ],
         ),
