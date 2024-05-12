@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:resterant_app/screens/categories_screen.dart';
 
 class HomeCategory extends StatefulWidget {
-  final IconData icon;
-  final String title;
-  final String items;
-  final Function tap; // Consider changing the type if tap is expected to return something.
+  final String imageUrl; // Remplacez image par imageUrl
+  final String name;
+  final Function tap;
   final bool isHome;
 
   const HomeCategory({
     Key? key,
-    required this.icon,
-    required this.title,
-    required this.items,
+    required this.imageUrl, // Remplacez image par imageUrl
+    required this.name,
     required this.tap,
     required this.isHome,
   }) : super(key: key);
@@ -27,15 +24,10 @@ class _HomeCategoryState extends State<HomeCategory> {
     return InkWell(
       onTap: () {
         if (widget.isHome) {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (BuildContext context) {
-                return CategoriesScreen();
-              },
-            ),
-          );
+          // Ajoutez ici la logique de navigation pour les catégories si nécessaire
+          // Par exemple, vous pouvez utiliser Navigator.push pour naviguer vers une autre page
         } else {
-          // Here you can call the tap function provided.
+          // Vous pouvez appeler la fonction de tap ici si nécessaire
           widget.tap();
         }
       },
@@ -48,11 +40,13 @@ class _HomeCategoryState extends State<HomeCategory> {
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.only(left: 0.0, right: 10.0),
-                child: Icon(
-                  widget.icon,
-                  //color: Theme.of(context).accentColor,
+                child: Image.network(
+                  widget.imageUrl, // Remplacez image par imageUrl
+                  width: 30, // Ajustez la largeur selon vos besoins
+                  height: 30, // Ajustez la hauteur selon vos besoins
                 ),
               ),
+              
               SizedBox(width: 5),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,17 +54,10 @@ class _HomeCategoryState extends State<HomeCategory> {
                 children: <Widget>[
                   SizedBox(height: 10.0),
                   Text(
-                    "${widget.title}",
+                    "${widget.name}",
                     style: TextStyle(
                       fontWeight: FontWeight.w900,
                       fontSize: 17,
-                    ),
-                  ),
-                  Text(
-                    "${widget.items} Items",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 10,
                     ),
                   ),
                   SizedBox(height: 5),
