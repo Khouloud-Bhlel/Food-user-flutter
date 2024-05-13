@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:resterant_app/screens/notifications.dart';
 import 'package:resterant_app/util/const.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductDetails extends StatefulWidget {
   final String productId;
@@ -14,6 +15,8 @@ class ProductDetails extends StatefulWidget {
 
 class _ProductDetailsState extends State<ProductDetails> {
   Map<String, dynamic>? _productDetails;
+    int _quantity = 1; // Initial value for quantity
+
 
   @override
   void initState() {
@@ -22,19 +25,60 @@ class _ProductDetailsState extends State<ProductDetails> {
   }
 
   void _fetchProductDetails() async {
-    try {
-      final response = await http.get(Uri.parse('http://192.168.56.33:9000/api/products/${widget.productId}'));
-      if (response.statusCode == 200) {
-        setState(() {
-          _productDetails = jsonDecode(response.body);
-        });
-      } else {
-        throw Exception('Failed to load product details');
-      }
-    } catch (e) {
-      print('Error: $e');
+  try {
+    final response = await http.get(Uri.parse('http://192.168.31.223:9000/api/products/${widget.productId}'));
+    if (response.statusCode == 200) {
+      setState(() {
+        _productDetails = jsonDecode(response.body);
+        // Ajouter le prix du produit aux détails du produit
+        _productDetails?['price'] = _productDetails?['price']; // Assurez-vous que la clé 'price' existe dans les détails du produit
+      });
+    } else {
+      throw Exception('Failed to load product details');
+    }
+  } catch (e) {
+    print('Error: $e');
+  }
+}
+
+
+void _addToCart() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  List<String> cartProducts = prefs.getStringList('cart') ?? [];
+  
+  // Add product details to cart
+  Map<String, dynamic> productDetails = {
+    'id': widget.productId,
+    'name': _productDetails?['name'] ?? '',
+    'image': _productDetails?['image'] ?? '',
+    'price': _productDetails != null && _productDetails!['price'] != null ? _productDetails!['price'].toString() : '0', // Vérifiez d'abord si _productDetails est null avant d'accéder à sa propriété price
+    'quantity': _quantity,
+  };
+  cartProducts.add(jsonEncode(productDetails)); // Convert product details to JSON
+  
+  await prefs.setStringList('cart', cartProducts);
+  print('Product Details Added to Cart: $productDetails');
+}
+
+
+
+
+void _incrementQuantity() {
+    setState(() {
+      _quantity++;
+    });
+  }
+
+  // Method to decrement quantity
+  void _decrementQuantity() {
+    if (_quantity > 1) {
+      setState(() {
+        _quantity--;
+      });
     }
   }
+  
+
 
   @override
   Widget build(BuildContext context) {
@@ -113,6 +157,16 @@ _productDetails?['name'] ?? '',
               ),
               SizedBox(height: 10.0),
              
+Text(
+  'Price: \$${(_productDetails?['price'] ?? 0).toStringAsFixed(2)}',
+  style: TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeight.w300,
+  ),
+),
+
+
+
               SizedBox(height: 20.0),
               Text(
                 "Product Description",
@@ -133,6 +187,37 @@ _productDetails?['desc'] ?? '',
               
               
               SizedBox(height: 10.0),
+               Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  "Quantity:",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Row(
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.remove),
+                      onPressed: _decrementQuantity,
+                    ),
+                    Text(
+                      _quantity.toString(),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: _incrementQuantity,
+                    ),
+                  ],
+                ),
+              ],
+            ),
             ],
           ),
         ),
@@ -142,10 +227,13 @@ _productDetails?['desc'] ?? '',
             child: Text(
               "ADD TO CART",
               style: TextStyle(
-                color: Colors.white,
+                color: Colors.orange,
               ),
             ),
-            onPressed: () {},
+            onPressed: () {
+              _addToCart();
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Product added to cart')));
+            },
           ),
         ),
       );

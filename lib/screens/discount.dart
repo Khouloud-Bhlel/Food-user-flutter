@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 
 Future<List<dynamic>> fetchPromotionalProducts() async {
-  final response = await http.get(Uri.parse('http://192.168.56.33:9000/api/products'));
+  final response = await http.get(Uri.parse('http://192.168.31.223:9000/api/products'));
   if (response.statusCode == 200) {
     final List<dynamic> products = jsonDecode(response.body);
     // Filtrer les produits pour ne récupérer que ceux en promotion

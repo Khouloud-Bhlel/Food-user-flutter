@@ -23,7 +23,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<List<dynamic>> fetchCategories() async {
-    final response = await http.get(Uri.parse('http://192.168.56.33:9000/api/categories'));
+    final response = await http.get(Uri.parse('http://192.168.31.223:9000/api/categories'));
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
@@ -31,7 +31,7 @@ class _HomeState extends State<Home> {
     }
   }
    Future<List<dynamic>> fetchProducts() async {
-    final response = await http.get(Uri.parse('http://192.168.56.33:9000/api/products'));
+    final response = await http.get(Uri.parse('http://192.168.31.223:9000/api/products'));
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
@@ -156,11 +156,13 @@ class _HomeState extends State<Home> {
         itemBuilder: (BuildContext context, int index) {
           Map? product = products[index];
           if (product != null) {
+
            return GridProduct(
   imageUrl: product['image'] ?? '',
   name: product['name'] ?? '',
   desc: product['desc'] ?? '',
   productId: product['_id'] ?? '',
+  price: (product['price'] ?? 0).toDouble(), // Convertir le prix en double
 
 
 );

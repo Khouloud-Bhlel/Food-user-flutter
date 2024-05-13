@@ -7,6 +7,8 @@ class GridProduct extends StatelessWidget {
   final String imageUrl;
   final String desc;
   final String productId;
+  final double price;
+
   // final DateTime startDate;
   // final DateTime endDate;
 
@@ -16,6 +18,8 @@ class GridProduct extends StatelessWidget {
     required this.imageUrl,
     required this.desc,
     required this.productId,
+    required this.price,
+
   }) : super(key: key);
 
   @override
