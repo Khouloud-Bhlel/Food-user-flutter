@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:resterant_app/util/const.dart';
-import 'package:resterant_app/util/foods.dart';
-import 'package:resterant_app/widgets/smooth_star_rating.dart';
+//import 'package:resterant_app/widgets/smooth_star_rating.dart';
 
 
 class SearchScreen extends StatefulWidget {
@@ -78,45 +77,25 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
             shrinkWrap: true,
             primary: false,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: foods == null ? 0 :foods.length,
+            // itemCount: foods == null ? 0 :foods.length,
             itemBuilder: (BuildContext context, int index) {
-              Map food = foods[index];
+            //   Map food = foods[index];
               return ListTile(
-                title: Text(
-                  "${food['name']}",
-                  style: TextStyle(
-//                    fontSize: 15,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                leading: CircleAvatar(
-                  radius: 25.0,
-                  backgroundImage: AssetImage(
-                    "${food['img']}",
-                  ),
-                ),
-                trailing: Text(r"$10"),
+//                 title: Text(
+//                   "${product['name']}",
+//                   style: TextStyle(
+// //                    fontSize: 15,
+//                     fontWeight: FontWeight.w900,
+//                   ),
+//                 ),
+                // leading: CircleAvatar(
+                //   radius: 25.0,
+                //   backgroundImage: AssetImage(
+                //     "${food['image']}",
+                //   ),
+                // ),
                 subtitle:  Row(
-                  children: <Widget>[
-                   SmoothStarRating(
-                          starCount: 5,
-                          color: Constants.ratingBG,
-                          allowHalfRating: true,
-                          rating: 0.5,
-                          size: 10.0,
-                          onRatingChanged: (rating) {}, // provide a default empty function
-                          borderColor: Colors.transparent, // provide a default color
-                        ),
-
-                    SizedBox(width: 6.0),
-                    Text(
-                      "5.0 (23 Reviews)",
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
-                  ],
+                  
                 ),
                 onTap: (){},
               );

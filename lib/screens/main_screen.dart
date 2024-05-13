@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:resterant_app/screens/cart.dart';
-import 'package:resterant_app/screens/favorite_screen.dart';
+import 'package:resterant_app/screens/discount.dart';
 import 'package:resterant_app/screens/home.dart';
 import 'package:resterant_app/screens/notifications.dart';
 import 'package:resterant_app/screens/settings.dart';
@@ -55,95 +55,94 @@ class _MainScreenState extends State<MainScreen> {
           onPageChanged: onPageChanged,
           children: <Widget>[
             Home(),
-            FavoriteScreen(),
+            DiscountPage(),        
             SearchScreen(),
             CartScreen(),
             Settings(),
           ],
         ),
-              bottomNavigationBar: BottomAppBar(
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  SizedBox(width: 7),
-                  IconButton(
-                    icon: Icon(
-                      Icons.home,
-                      size: 24.0,
-                    ),
-                    color: _page == 0
-                        ? Colors.yellow // If pressed, icon turns yellow
-                        : Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white // If dark mode, icon is white
-                            : Colors.black, // Otherwise, icon is black
-                    onPressed: () => _pageController.jumpToPage(0),
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.favorite,
-                      size: 24.0,
-                    ),
-                    color: _page == 1
-                        ? Colors.yellow
-                        : Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white
-                            : Colors.black,
-                    onPressed: () => _pageController.jumpToPage(1),
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.search,
-                      size: 24.0,
-                    ),
-                    color: _page == 2
-                        ? Colors.yellow
-                        : Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white
-                            : Colors.black,
-                    onPressed: () => _pageController.jumpToPage(2),
-                  ),
-                  IconButton(
-                    icon: IconBadge(
-                      icon: Icons.shopping_cart,
-                      size: 24.0,
-                    ),
-                    color: _page == 3
-                        ? Colors.yellow
-                        : Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white
-                            : Colors.black,
-                    onPressed: () => _pageController.jumpToPage(3),
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.settings,
-                      size: 24.0,
-                    ),
-                    color: _page == 4
-                        ? Colors.yellow
-                        : Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white
-                            : Colors.black,
-                    onPressed: () => _pageController.jumpToPage(4),
-                  ),
-                  SizedBox(width: 7),
-                ],
+        bottomNavigationBar: BottomAppBar(
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              SizedBox(width: 7),
+              IconButton(
+                icon: Icon(
+                  Icons.home,
+                  size: 24.0,
+                ),
+                color: _page == 0
+                    ? Colors.yellow // If pressed, icon turns yellow
+                    : Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white // If dark mode, icon is white
+                        : Colors.black, // Otherwise, icon is black
+                onPressed: () => _pageController.jumpToPage(0),
               ),
-              color: Theme.of(context).primaryColor,
-              shape: CircularNotchedRectangle(),
-            ),
-            floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-            floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-            floatingActionButton: FloatingActionButton(
-              elevation: 4.0,
-              child: Icon(
-                Icons.search,
+              IconButton(
+  icon: Icon(
+    Icons.local_offer,
+    size: 24.0,
+  ),
+  color: _page == 1
+      ? Colors.yellow
+      : Theme.of(context).brightness == Brightness.dark
+          ? Colors.white
+          : Colors.black,
+  onPressed: () => _pageController.jumpToPage(1),
+),
+              IconButton(
+                icon: Icon(
+                  Icons.search,
+                  size: 24.0,
+                ),
+                color: _page == 2
+                    ? Colors.yellow
+                    : Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black,
+                onPressed: () => _pageController.jumpToPage(2),
               ),
-              onPressed: () => _pageController.jumpToPage(2),
-            ),
-
-   ),
+              IconButton(
+                icon: IconBadge(
+                  icon: Icons.shopping_cart,
+                  size: 24.0,
+                ),
+                color: _page == 3
+                    ? Colors.yellow
+                    : Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black,
+                onPressed: () => _pageController.jumpToPage(3),
+              ),
+              IconButton(
+                icon: Icon(
+                  Icons.settings,
+                  size: 24.0,
+                ),
+                color: _page == 4
+                    ? Colors.yellow
+                    : Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black,
+                onPressed: () => _pageController.jumpToPage(4),
+              ),
+              SizedBox(width: 7),
+            ],
+          ),
+          color: Theme.of(context).primaryColor,
+          shape: CircularNotchedRectangle(),
+        ),
+        floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: FloatingActionButton(
+          elevation: 4.0,
+          child: Icon(
+            Icons.search,
+          ),
+          onPressed: () => _pageController.jumpToPage(2),
+        ),
+      ),
     );
   }
 

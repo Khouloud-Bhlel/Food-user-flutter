@@ -1,273 +1,246 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:resterant_app/screens/notifications.dart';
-import 'package:resterant_app/util/comments.dart';
 import 'package:resterant_app/util/const.dart';
-import 'package:resterant_app/util/foods.dart';
-import 'package:resterant_app/widgets/badge.dart';
-import 'package:resterant_app/widgets/smooth_star_rating.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductDetails extends StatefulWidget {
+  final String productId;
+
+  ProductDetails({required this.productId});
   @override
   _ProductDetailsState createState() => _ProductDetailsState();
 }
 
 class _ProductDetailsState extends State<ProductDetails> {
-  bool isFav = false;
+  Map<String, dynamic>? _productDetails;
+    int _quantity = 1; // Initial value for quantity
+
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchProductDetails();
+  }
+
+  void _fetchProductDetails() async {
+  try {
+    final response = await http.get(Uri.parse('http://192.168.31.223:9000/api/products/${widget.productId}'));
+    if (response.statusCode == 200) {
+      setState(() {
+        _productDetails = jsonDecode(response.body);
+        // Ajouter le prix du produit aux détails du produit
+        _productDetails?['price'] = _productDetails?['price']; // Assurez-vous que la clé 'price' existe dans les détails du produit
+      });
+    } else {
+      throw Exception('Failed to load product details');
+    }
+  } catch (e) {
+    print('Error: $e');
+  }
+}
+
+
+void _addToCart() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  List<String> cartProducts = prefs.getStringList('cart') ?? [];
+  
+  // Add product details to cart
+  Map<String, dynamic> productDetails = {
+    'id': widget.productId,
+    'name': _productDetails?['name'] ?? '',
+    'image': _productDetails?['image'] ?? '',
+    'price': _productDetails != null && _productDetails!['price'] != null ? _productDetails!['price'].toString() : '0', // Vérifiez d'abord si _productDetails est null avant d'accéder à sa propriété price
+    'quantity': _quantity,
+  };
+  cartProducts.add(jsonEncode(productDetails)); // Convert product details to JSON
+  
+  await prefs.setStringList('cart', cartProducts);
+  print('Product Details Added to Cart: $productDetails');
+}
+
+
+
+
+void _incrementQuantity() {
+    setState(() {
+      _quantity++;
+    });
+  }
+
+  // Method to decrement quantity
+  void _decrementQuantity() {
+    if (_quantity > 1) {
+      setState(() {
+        _quantity--;
+      });
+    }
+  }
+  
+
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          icon: Icon(
-            Icons.keyboard_backspace,
+    if (_productDetails != null) {
+      return Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            icon: Icon(
+              Icons.keyboard_backspace,
+            ),
+            onPressed: () => Navigator.pop(context),
           ),
-          onPressed: ()=>Navigator.pop(context),
-        ),
-        centerTitle: true,
-        title: Text(
-          "Item Details",
-        ),
-        elevation: 0.0,
-        actions: <Widget>[
-          IconButton(
-            icon: IconBadge(
-              icon: Icons.notifications,
-              size: 22.0,
-            ),
-            onPressed: (){
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (BuildContext context){
-                    return Notifications();
-                  },
-                ),
-              );
-            },
+          centerTitle: true,
+          title: Text(
+            "Item Details",
           ),
-        ],
-      ),
-
-      body: Padding(
-        padding: EdgeInsets.fromLTRB(10.0,0,10.0,0),
-        child: ListView(
-          children: <Widget>[
-            SizedBox(height: 10.0),
-            Stack(
-              children: <Widget>[
-                Container(
-                  height: MediaQuery.of(context).size.height / 3.2,
-                  width: MediaQuery.of(context).size.width,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8.0),
-                    child: Image.asset(
-                      "${foods[1]['img']}",
-                      fit: BoxFit.cover,
-                    ),
+          elevation: 0.0,
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(
+                Icons.notifications,
+                size: 22.0,
+              ),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return Notifications();
+                    },
                   ),
-                ),
-
-                Positioned(
-                  right: -10.0,
-                  bottom: 3.0,
-                  child: RawMaterialButton(
-                    onPressed: (){},
-                    fillColor: Colors.white,
-                    shape: CircleBorder(),
-                    elevation: 4.0,
-                    child: Padding(
-                      padding: EdgeInsets.all(5),
-                      child: Icon(
-                        isFav
-                            ?Icons.favorite
-                            :Icons.favorite_border,
-                        color: Colors.red,
-                        size: 17,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            SizedBox(height: 10.0),
-
-            Text(
-              "${foods[1]['name']}",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-              ),
-              maxLines: 2,
-            ),
-
-            Padding(
-              padding: EdgeInsets.only(bottom: 5.0, top: 2.0),
-              child: Row(
-                children: <Widget>[
-                  SmoothStarRating(
-                          starCount: 5,
-                          color: Constants.ratingBG,
-                          allowHalfRating: true,
-                          rating: 0.5,
-                          size: 10.0,
-                          onRatingChanged: (rating) {}, // provide a default empty function
-                          borderColor: Colors.transparent, // provide a default color
-                        ),
-                  SizedBox(width: 10.0),
-
-                  Text(
-                    "5.0 (23 Reviews)",
-                    style: TextStyle(
-                      fontSize: 11.0,
-                    ),
-                  ),
-
-                ],
-              ),
-            ),
-
-
-            Padding(
-              padding: EdgeInsets.only(bottom: 5.0, top: 2.0),
-              child: Row(
-                children: <Widget>[
-                  Text(
-                    "20 Pieces",
-                    style: TextStyle(
-                      fontSize: 11.0,
-                      fontWeight: FontWeight.w300,
-                    ),
-                  ),
-                  SizedBox(width: 10.0),
-
-                  Text(
-                    r"$90",
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.w900,
-                      //color: Theme.of(context).accentColor,
-                    ),
-                  ),
-
-                ],
-              ),
-            ),
-
-
-            SizedBox(height: 20.0),
-
-            Text(
-              "Product Description",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-              ),
-              maxLines: 2,
-            ),
-
-            SizedBox(height: 10.0),
-
-            Text(
-              "Nulla quis lorem ut libero malesuada feugiat. Lorem ipsum dolor "
-                  "sit amet, consectetur adipiscing elit. Curabitur aliquet quam "
-                  "id dui posuere blandit. Pellentesque in ipsum id orci porta "
-                  "dapibus. Vestibulum ante ipsum primis in faucibus orci luctus "
-                  "et ultrices posuere cubilia Curae; Donec velit neque, auctor "
-                  "sit amet aliquam vel, ullamcorper sit amet ligula. Donec"
-                  " rutrum congue leo eget malesuada. Vivamus magna justo,"
-                  " lacinia eget consectetur sed, convallis at tellus."
-                  " Vivamus suscipit tortor eget felis porttitor volutpat."
-                  " Donec rutrum congue leo eget malesuada."
-                  " Pellentesque in ipsum id orci porta dapibus.",
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w300,
-              ),
-            ),
-
-            SizedBox(height: 20.0),
-
-            Text(
-              "Reviews",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-              ),
-              maxLines: 2,
-            ),
-            SizedBox(height: 20.0),
-
-            ListView.builder(
-              shrinkWrap: true,
-              primary: false,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: comments == null?0:comments.length,
-              itemBuilder: (BuildContext context, int index) {
-                Map comment = comments[index];
-                return ListTile(
-                    leading: CircleAvatar(
-                      radius: 25.0,
-                      backgroundImage: AssetImage(
-                        "${comment['img']}",
-                      ),
-                    ),
-
-                    title: Text("${comment['name']}"),
-                    subtitle: Column(
-                      children: <Widget>[
-                        Row(
-                          children: <Widget>[
-                            SmoothStarRating(
-                          starCount: 5,
-                          color: Constants.ratingBG,
-                          allowHalfRating: true,
-                          rating: 0.5,
-                          size: 10.0,
-                          onRatingChanged: (rating) {}, // provide a default empty function
-                          borderColor: Colors.transparent, // provide a default color
-                        ),
-                            SizedBox(width: 6.0),
-                            Text(
-                              "February 14, 2020",
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        SizedBox(height: 7.0),
-                        Text(
-                          "${comment["comment"]}",
-                        ),
-                      ],
-                    ),
                 );
               },
             ),
-
-            SizedBox(height: 10.0),
           ],
         ),
-      ),
+        body: Padding(
+          padding: EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
+          child: ListView(
+            children: <Widget>[
+              SizedBox(height: 10.0),
+              Stack(
+                children: <Widget>[
+                  Container(
+  height: MediaQuery.of(context).size.height / 3.2,
+  width: MediaQuery.of(context).size.width,
+  child: ClipRRect(
+    borderRadius: BorderRadius.circular(8.0),
+    child: Image.network(
+      _productDetails?['image'] ?? '', // Use null-aware operators
+      fit: BoxFit.cover,
+    ),
+  ),
+),
+
+                  Positioned(
+                    right: -10.0,
+                    bottom: 3.0,
+                    child: RawMaterialButton(
+                      onPressed: () {},
+                      fillColor: Colors.white,
+                      shape: CircleBorder(),
+                      elevation: 4.0,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10.0),
+              Text(
+_productDetails?['name'] ?? '',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800,
+                ),
+                maxLines: 2,
+              ),
+              SizedBox(height: 10.0),
+             
+Text(
+  'Price: \$${(_productDetails?['price'] ?? 0).toStringAsFixed(2)}',
+  style: TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeight.w300,
+  ),
+),
 
 
 
-      bottomNavigationBar: Container(
-      height: 50.0,
-      child: ElevatedButton(
-        child: Text(
-          "ADD TO CART",
-          style: TextStyle(
-            color: Colors.white,
+              SizedBox(height: 20.0),
+              Text(
+                "Product Description",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                ),
+                maxLines: 2,
+              ),
+              SizedBox(height: 10.0),
+              Text(
+_productDetails?['desc'] ?? '',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w300,
+                ),
+              ),
+              
+              
+              SizedBox(height: 10.0),
+               Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  "Quantity:",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Row(
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.remove),
+                      onPressed: _decrementQuantity,
+                    ),
+                    Text(
+                      _quantity.toString(),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: _incrementQuantity,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            ],
           ),
         ),
-        onPressed: () {},
-      ),
-    ),
-
-    );
+        bottomNavigationBar: Container(
+          height: 50.0,
+          child: ElevatedButton(
+            child: Text(
+              "ADD TO CART",
+              style: TextStyle(
+                color: Colors.orange,
+              ),
+            ),
+            onPressed: () {
+              _addToCart();
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Product added to cart')));
+            },
+          ),
+        ),
+      );
+    } else {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
   }
 }
