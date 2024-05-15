@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:resterant_app/screens/notifications.dart';
+import 'package:resterant_app/screens/myorder.dart';
 import 'package:resterant_app/util/const.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -26,7 +26,7 @@ class _ProductDetailsState extends State<ProductDetails> {
 
   void _fetchProductDetails() async {
   try {
-    final response = await http.get(Uri.parse('http://192.168.31.223:9000/api/products/${widget.productId}'));
+final response = await http.get(Uri.parse('http://192.168.218.223:9000/api/products/${widget.productId}'));
     if (response.statusCode == 200) {
       setState(() {
         _productDetails = jsonDecode(response.body);
@@ -100,14 +100,14 @@ void _incrementQuantity() {
           actions: <Widget>[
             IconButton(
               icon: Icon(
-                Icons.notifications,
+                Icons.shopping_bag,
                 size: 22.0,
               ),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (BuildContext context) {
-                      return Notifications();
+                      return OrderPage();
                     },
                   ),
                 );
@@ -134,19 +134,32 @@ void _incrementQuantity() {
   ),
 ),
 
-                  Positioned(
-                    right: -10.0,
-                    bottom: 3.0,
-                    child: RawMaterialButton(
-                      onPressed: () {},
-                      fillColor: Colors.white,
-                      shape: CircleBorder(),
-                      elevation: 4.0,
-                    ),
-                  ),
-                ],
+               if (_productDetails != null &&
+                _productDetails!['promotion'] != null &&
+                _productDetails!['promotion']['reduction'] != null)
+              Positioned(
+                right: -10.0,
+                bottom: 3.0,
+                child: RawMaterialButton(
+                  onPressed: () {},
+                  fillColor: Colors.red, // Couleur du cercle pour une réduction existante
+                  shape: CircleBorder(),
+                  elevation: 4.0,
+                  child: Center(
+  child: Text(
+    '${_productDetails!['promotion']['reduction']}%', // Affichage de la valeur de réduction avec le symbole de pourcentage
+    style: TextStyle(
+      color: Colors.white, // Couleur du texte
+      fontSize: 12.0, // Taille du texte
+    ),
+  ),
+),
+
+                ),
               ),
-              SizedBox(height: 10.0),
+          ],
+        ),
+        SizedBox(height: 10.0),
               Text(
 _productDetails?['name'] ?? '',
                 style: TextStyle(
@@ -158,12 +171,13 @@ _productDetails?['name'] ?? '',
               SizedBox(height: 10.0),
              
 Text(
-  'Price: \$${(_productDetails?['price'] ?? 0).toStringAsFixed(2)}',
+  'Prix: ${(_productDetails?['price'] ?? 0).toStringAsFixed(2)} DT',
   style: TextStyle(
     fontSize: 13,
     fontWeight: FontWeight.w300,
   ),
 ),
+
 
 
 
