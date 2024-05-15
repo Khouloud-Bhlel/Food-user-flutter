@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:resterant_app/screens/cart.dart';
 import 'package:resterant_app/screens/discount.dart';
 import 'package:resterant_app/screens/home.dart';
-import 'package:resterant_app/screens/notifications.dart';
+import 'package:resterant_app/screens/myorder.dart';
 import 'package:resterant_app/screens/settings.dart';
 import 'package:resterant_app/screens/search.dart';
 import 'package:resterant_app/util/const.dart';
@@ -31,22 +31,23 @@ class _MainScreenState extends State<MainScreen> {
           ),
           elevation: 0.0,
           actions: <Widget>[
-            IconButton(
-              icon: IconBadge(
-                icon: Icons.notifications,
-                size: 22.0,
-              ),
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (BuildContext context) {
-                      return Notifications();
-                    },
-                  ),
-                );
-              },
-              tooltip: "Notifications",
-            ),
+           IconButton(
+  icon: Icon(
+    Icons.shopping_bag, // Icône représentant les commandes
+    size: 22.0,
+  ),
+  onPressed: () {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (BuildContext context) {
+          return OrderPage();
+        },
+      ),
+    );
+  },
+  tooltip: "My orders",
+),
+
           ],
         ),
         body: PageView(

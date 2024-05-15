@@ -13,6 +13,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   late Future<List<dynamic>> _categoriesFuture;
   late Future<List<dynamic>> _productsFuture;
+  
 
   @override
   void initState() {
@@ -23,7 +24,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<List<dynamic>> fetchCategories() async {
-    final response = await http.get(Uri.parse('http://192.168.31.223:9000/api/categories'));
+    final response = await http.get(Uri.parse('http://192.168.218.223:9000/api/categories'));
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
@@ -31,7 +32,7 @@ class _HomeState extends State<Home> {
     }
   }
    Future<List<dynamic>> fetchProducts() async {
-    final response = await http.get(Uri.parse('http://192.168.31.223:9000/api/products'));
+    final response = await http.get(Uri.parse('http://192.168.218.223:9000/api/products'));
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
@@ -163,6 +164,7 @@ class _HomeState extends State<Home> {
   desc: product['desc'] ?? '',
   productId: product['_id'] ?? '',
   price: (product['price'] ?? 0).toDouble(), // Convertir le prix en double
+  reduction: (product['reduction'] ?? 0).toDouble(), // Convertir le prix en double
 
 
 );

@@ -8,6 +8,7 @@ class GridProduct extends StatelessWidget {
   final String desc;
   final String productId;
   final double price;
+  final double reduction;
 
   // final DateTime startDate;
   // final DateTime endDate;
@@ -19,6 +20,7 @@ class GridProduct extends StatelessWidget {
     required this.desc,
     required this.productId,
     required this.price,
+     required this.reduction,
 
   }) : super(key: key);
 
