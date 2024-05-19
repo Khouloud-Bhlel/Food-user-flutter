@@ -24,7 +24,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<List<dynamic>> fetchCategories() async {
-    final response = await http.get(Uri.parse('http://192.168.218.223:9000/api/categories'));
+    final response = await http.get(Uri.parse('http://192.168.0.237:9000/api/categories'));
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
@@ -32,7 +32,7 @@ class _HomeState extends State<Home> {
     }
   }
    Future<List<dynamic>> fetchProducts() async {
-    final response = await http.get(Uri.parse('http://192.168.218.223:9000/api/products'));
+    final response = await http.get(Uri.parse('http://192.168.0.237:9000/api/products'));
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {

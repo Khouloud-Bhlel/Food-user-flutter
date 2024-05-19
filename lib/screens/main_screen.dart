@@ -5,7 +5,7 @@ import 'package:resterant_app/screens/discount.dart';
 import 'package:resterant_app/screens/home.dart';
 import 'package:resterant_app/screens/myorder.dart';
 import 'package:resterant_app/screens/settings.dart';
-import 'package:resterant_app/screens/search.dart';
+import 'package:resterant_app/screens/contact.dart';
 import 'package:resterant_app/util/const.dart';
 import 'package:resterant_app/widgets/badge.dart';
 
@@ -31,23 +31,22 @@ class _MainScreenState extends State<MainScreen> {
           ),
           elevation: 0.0,
           actions: <Widget>[
-           IconButton(
-  icon: Icon(
-    Icons.shopping_bag, // Icône représentant les commandes
-    size: 22.0,
-  ),
-  onPressed: () {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (BuildContext context) {
-          return OrderPage();
-        },
-      ),
-    );
-  },
-  tooltip: "My orders",
-),
-
+            IconButton(
+              icon: Icon(
+                Icons.shopping_bag, // Icon representing the orders
+                size: 22.0,
+              ),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return OrderPage();
+                    },
+                  ),
+                );
+              },
+              tooltip: "My orders",
+            ),
           ],
         ),
         body: PageView(
@@ -56,8 +55,8 @@ class _MainScreenState extends State<MainScreen> {
           onPageChanged: onPageChanged,
           children: <Widget>[
             Home(),
-            DiscountPage(),        
-            SearchScreen(),
+            DiscountPage(),
+            ContactPage(), // Updated contact icon here
             CartScreen(),
             Settings(),
           ],
@@ -81,28 +80,16 @@ class _MainScreenState extends State<MainScreen> {
                 onPressed: () => _pageController.jumpToPage(0),
               ),
               IconButton(
-  icon: Icon(
-    Icons.local_offer,
-    size: 24.0,
-  ),
-  color: _page == 1
-      ? Colors.yellow
-      : Theme.of(context).brightness == Brightness.dark
-          ? Colors.white
-          : Colors.black,
-  onPressed: () => _pageController.jumpToPage(1),
-),
-              IconButton(
                 icon: Icon(
-                  Icons.search,
+                  Icons.local_offer,
                   size: 24.0,
                 ),
-                color: _page == 2
+                color: _page == 1
                     ? Colors.yellow
                     : Theme.of(context).brightness == Brightness.dark
                         ? Colors.white
                         : Colors.black,
-                onPressed: () => _pageController.jumpToPage(2),
+                onPressed: () => _pageController.jumpToPage(1),
               ),
               IconButton(
                 icon: IconBadge(
@@ -115,6 +102,18 @@ class _MainScreenState extends State<MainScreen> {
                         ? Colors.white
                         : Colors.black,
                 onPressed: () => _pageController.jumpToPage(3),
+              ),
+              IconButton(
+                icon: Icon(
+                  Icons.contact_mail, // Changed to contact icon
+                  size: 24.0,
+                ),
+                color: _page == 2
+                    ? Colors.yellow
+                    : Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black,
+                onPressed: () => _pageController.jumpToPage(2),
               ),
               IconButton(
                 icon: Icon(
@@ -136,13 +135,13 @@ class _MainScreenState extends State<MainScreen> {
         ),
         floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: FloatingActionButton(
-          elevation: 4.0,
-          child: Icon(
-            Icons.search,
-          ),
-          onPressed: () => _pageController.jumpToPage(2),
-        ),
+        // floatingActionButton: FloatingActionButton(
+        //   elevation: 4.0,
+        //    child: Icon(
+        //      Icons.search,
+        //    ),
+        //   onPressed: () => _pageController.jumpToPage(2),
+        // ),
       ),
     );
   }

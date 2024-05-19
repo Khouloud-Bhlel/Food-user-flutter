@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:resterant_app/screens/login.dart';
 import 'package:resterant_app/screens/register.dart';
-import 'package:flutter/services.dart';
 
 class JoinApp extends StatefulWidget {
   @override

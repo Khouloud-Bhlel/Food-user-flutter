@@ -26,7 +26,7 @@ class _ProductDetailsState extends State<ProductDetails> {
 
   void _fetchProductDetails() async {
   try {
-final response = await http.get(Uri.parse('http://192.168.218.223:9000/api/products/${widget.productId}'));
+final response = await http.get(Uri.parse('http://192.168.0.237:9000/api/products/${widget.productId}'));
     if (response.statusCode == 200) {
       setState(() {
         _productDetails = jsonDecode(response.body);

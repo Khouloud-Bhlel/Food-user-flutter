@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 
 Future<List<dynamic>> fetchPromotionalProducts() async {
-  final response = await http.get(Uri.parse('http://192.168.218.223:9000/api/products'));
+  final response = await http.get(Uri.parse('http://192.168.0.237:9000/api/products'));
   if (response.statusCode == 200) {
     final List<dynamic> products = jsonDecode(response.body);
     final List<dynamic> promotionalProducts = products.where((product) =>

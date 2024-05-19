@@ -113,7 +113,7 @@ class _CartScreenState extends State<CartScreen> {
 
   try {
     final response = await http.post(
-      Uri.parse('http://192.168.218.223:9000/api/orders'),
+      Uri.parse('http://192.168.0.237:9000/api/orders'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

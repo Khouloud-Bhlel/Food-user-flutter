@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:resterant_app/screens/join.dart';
+import 'package:resterant_app/screens/main_screen.dart';
 
 
 class Walkthrough extends StatefulWidget {

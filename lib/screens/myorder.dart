@@ -25,7 +25,7 @@ Future<void> fetchOrders() async {
     // Gérer le cas où l'ID client n'est pas disponible
     return;
   }
-  String url = 'http://192.168.218.223:9000/api/orders?clientId=$clientId';
+  String url = 'http://192.168.0.237:9000/api/orders?clientId=$clientId';
   try {
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {

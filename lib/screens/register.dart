@@ -1,8 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:resterant_app/screens/main_screen.dart';
-import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:resterant_app/screens/main_screen.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -14,9 +15,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _emailControl = TextEditingController();
   final TextEditingController _passwordControl = TextEditingController();
   final TextEditingController _confirmPasswordControl = TextEditingController();
+  GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
+  Future<void> _handleGoogleSignIn(BuildContext context) async {
+    try {
+      GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser != null) {
+        GoogleSignInAuthentication? googleAuth = await googleUser.authentication;
+        final String accessToken = googleAuth?.accessToken ?? '';
 
-  Future<void> registerUser() async {
-    final String apiUrl = 'http:// 192.168.218.223:9000/api/register_flutter'; 
+        // Now you can send the accessToken to your backend for verification and user creation if necessary
+
+        // Navigate to your main screen after successful login
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (BuildContext context) {
+            return MainScreen();
+          },
+        ));
+      } else {
+        // Handle null case
+        print('Google sign-in failed');
+      }
+    } catch (error) {
+      print('Google sign-in error: $error');
+      // Handle sign-in errors here
+    }
+  }
+  Future<void> registerUser(BuildContext context) async {
+    final String apiUrl = 'http://192.168.0.237:9000/api/register_flutter';
     try {
       final response = await http.post(
         Uri.parse(apiUrl),
@@ -86,25 +111,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(20.0, 0, 20, 0),
+    return Scaffold(
+      // appBar: AppBar(
+      //   title: Text("Register"),
+      // ),
+      body: Padding(
+        padding: EdgeInsets.all(20.0),
         child: ListView(
-          shrinkWrap: true,
           children: <Widget>[
             SizedBox(height: 10.0),
-             Container(
-            alignment: Alignment.center,
-            margin: EdgeInsets.only(
-              top: 25.0,
-            ),
-            child: Text(
-              "Create new account",
-              style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.w700,
+            Container(
+              alignment: Alignment.center,
+              margin: EdgeInsets.only(top: 25.0),
+              child: Text(
+                "Create new account",
+                style: TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
-          ),
             SizedBox(height: 30.0),
             TextField(
               controller: _fullNameControl,
@@ -141,47 +167,41 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             SizedBox(height: 20.0),
             ElevatedButton(
-              onPressed: registerUser,
+              onPressed: () => registerUser(context),
               child: Text("Register"),
             ),
             SizedBox(height: 10.0),
             Divider(),
-            SizedBox(height: 10.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                RawMaterialButton(
-                  onPressed: () {},
-                  fillColor: Colors.blue[800],
-                  shape: CircleBorder(),
-                  elevation: 4.0,
-                  child: Padding(
-                    padding: EdgeInsets.all(15),
-                    child: Icon(
-                      FontAwesomeIcons.facebookF,
-                      color: Colors.white,
+             SizedBox(height: 10.0),
+            Center(
+              child: Container(
+                width: MediaQuery.of(context).size.width / 2,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    RawMaterialButton(
+                      onPressed: () {
+                        _handleGoogleSignIn(context);  
+                     },
+                      fillColor: Colors.white,
+                      shape: CircleBorder(),
+                      elevation: 4.0,
+                      child: Padding(
+                        padding: EdgeInsets.all(15),
+                        child: Icon(
+                          FontAwesomeIcons.google,
+                          color: Colors.blue[800],
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-                SizedBox(width: 20.0),
-                RawMaterialButton(
-                  onPressed: () {},
-                  fillColor: Colors.white,
-                  shape: CircleBorder(),
-                  elevation: 4.0,
-                  child: Padding(
-                    padding: EdgeInsets.all(15),
-                    child: Icon(
-                      FontAwesomeIcons.google,
-                      color: Colors.blue[800],
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
+            SizedBox(height: 20.0),
           ],
         ),
-      
+      ),
     );
   }
 }
